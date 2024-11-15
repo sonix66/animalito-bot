@@ -17,7 +17,10 @@ func (c *Controller) HandleStartCommand(ctx telebot.Context) error {
 		return fmt.Errorf("c.announcementService.GetAnnouncementByID: %w", err)
 	}
 
-	ctx.Reply(announcement.ID)
+	err = ctx.Reply(announcement.ID)
+	if err != nil {
+		return fmt.Errorf("ctx.Reply: %w", err)
+	}
 
 	return nil
 }

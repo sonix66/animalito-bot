@@ -1,4 +1,5 @@
-logger_level: ${LOGGER_LEVEL}
+logger:
+  level: ${LOGGER_LEVEL}
 
 telegram:
   token: ${TELEGRAM_TOKEN}

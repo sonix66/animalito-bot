@@ -4,17 +4,14 @@ import (
 	"context"
 	"errors"
 	"flag"
-	"fmt"
-	"log/slog"
-	"os"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonix66/animalito-bot/internal/config"
 	"github.com/sonix66/animalito-bot/internal/controller/telegram"
-	"github.com/sonix66/animalito-bot/internal/logger"
 	"github.com/sonix66/animalito-bot/internal/repository/postgres"
 	announcementservice "github.com/sonix66/animalito-bot/internal/services/announcement_service"
+	"github.com/sonix66/animalito-bot/pkg/logger"
 	"gopkg.in/telebot.v4"
 )
 
@@ -24,17 +21,11 @@ func main() {
 		panic(err)
 	}
 
-	cfg, err := config.InitConfig(configFile)
-	if err != nil {
-		panic(err)
-	}
+	cfg := config.MustInit(configFile)
 
-	err = logger.Init(cfg)
-	if err != nil {
-		panic(err)
-	}
+	logger.MustInitGlobal(cfg.Logger)
 
-	pool, err := pgxpool.New(context.Background(), getDSNFromConfig(cfg))
+	pool, err := pgxpool.New(context.Background(), cfg.Postgres.GetDSN())
 	if err != nil {
 		panic(err)
 	}
@@ -55,9 +46,9 @@ func main() {
 
 	telegram.InitHandlers(bot, controller)
 
-	logger.INFO("bot is ready to start",
+	logger.Info("bot is ready to start",
 		"token", cfg.Telegram.Token,
-		"logger_level", cfg.LoggerLevel,
+		"logger_level", cfg.Logger.Level,
 	)
 
 	bot.Start()
@@ -72,26 +63,4 @@ func getConfigFile() (string, error) {
 	}
 
 	return *configFile, nil
-}
-
-func getDSNFromConfig(config *config.Config) string {
-	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", config.Postgres.Host, config.Postgres.Port, config.Postgres.User, config.Postgres.Password, config.Postgres.Database)
-}
-
-func initLogger(cfg *config.Config) *slog.Logger {
-	loggerLevel := slog.LevelInfo
-	switch cfg.LoggerLevel {
-	case "debug":
-		loggerLevel = slog.LevelDebug
-	case "error":
-		loggerLevel = slog.LevelError
-	case "info":
-		loggerLevel = slog.LevelInfo
-	case "warn":
-		loggerLevel = slog.LevelWarn
-	}
-
-	return slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: loggerLevel,
-	}))
 }

@@ -1,6 +1,9 @@
 package config
 
-import "github.com/sonix66/animalito-bot/internal/repository/postgres"
+import (
+	"github.com/sonix66/animalito-bot/internal/repository/postgres"
+	"github.com/sonix66/animalito-bot/pkg/logger"
+)
 
 type (
 	TelegramConfig struct {
@@ -9,8 +12,8 @@ type (
 	}
 
 	Config struct {
-		LoggerLevel string                   `mapstructure:"logger_level"`
-		Telegram    *TelegramConfig          `mapstructure:"telegram"`
-		Postgres    *postgres.PostgresConfig `mapstructure:"postgres"`
+		Logger   *logger.Config   `mapstructure:"logger"`
+		Telegram *TelegramConfig  `mapstructure:"telegram"`
+		Postgres *postgres.Config `mapstructure:"postgres"`
 	}
 )

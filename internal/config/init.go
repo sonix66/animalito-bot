@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func InitConfig(configFile string) (*Config, error) {
+func MustInit(configFile string) *Config {
 	v := viper.New()
 	ext := strings.TrimLeft(filepath.Ext(configFile), ".")
 	v.SetConfigFile(configFile)
@@ -17,7 +17,7 @@ func InitConfig(configFile string) (*Config, error) {
 
 	err := v.ReadInConfig()
 	if err != nil {
-		return nil, fmt.Errorf("v.ReadInConfig: %w", err)
+		panic(fmt.Errorf("v.ReadInConfig: %w", err))
 	}
 
 	for _, k := range v.AllKeys() {
@@ -28,10 +28,12 @@ func InitConfig(configFile string) (*Config, error) {
 		v.Set(k, os.ExpandEnv(value))
 	}
 
-	cfg := new(Config)
-	if err := v.Unmarshal(cfg); err != nil {
-		return nil, fmt.Errorf("v.Unmarshal: %w", err)
+	var cfg *Config
+
+	err = v.Unmarshal(cfg)
+	if err != nil {
+		panic(fmt.Errorf("v.Unmarshal: %w", err))
 	}
 
-	return cfg, nil
+	return cfg
 }
