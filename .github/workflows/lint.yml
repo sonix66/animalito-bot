@@ -1,29 +1,26 @@
-name: Lint
-
+name: golangci-lint
 on:
   push:
     branches:
-      - '**'
+      - main
+      - master
   pull_request:
 
+permissions:
+  contents: read
+  # Optional: allow read access to pull request. Use with `only-new-issues` option.
+  # pull-requests: read
+
 jobs:
-  lint:
-    name: Run GolangCI-Lint
+  golangci:
+    name: lint
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: 1.22.3
-
-      - name: Install GolangCI-Lint
-        run: |
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62.0
-
-      - name: Run GolangCI-Lint
-        run: |
-          ./bin/golangci-lint run --fix
+          go-version: v1.22.3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.62
