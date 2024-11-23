@@ -28,12 +28,12 @@ func MustInit(configFile string) *Config {
 		v.Set(k, os.ExpandEnv(value))
 	}
 
-	var cfg *Config
+	var cfg Config
 
-	err = v.Unmarshal(cfg)
+	err = v.Unmarshal(&cfg)
 	if err != nil {
 		panic(fmt.Errorf("v.Unmarshal: %w", err))
 	}
 
-	return cfg
+	return &cfg
 }
