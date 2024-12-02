@@ -6,7 +6,7 @@ import {
   Subheadline,
   Caption,
 } from "@telegram-apps/telegram-ui";
-import { getMockAnimalById, deleteMockAnimal } from "../api/animalApi";
+import { getAnimalById, deleteAnimal } from "../api/animalApi";
 import { BackButton, useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { PhotoList } from "../components/PhotoList";
 import { Animal } from "../models/animal";
@@ -19,7 +19,7 @@ const AnimalDetails: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      getMockAnimalById(id)
+      getAnimalById(id)
         .then(setAnimal)
         .catch(() => alert("Не удалось загрузить объявление."));
     }
@@ -27,7 +27,7 @@ const AnimalDetails: React.FC = () => {
 
   const handleDelete = async () => {
     try {
-      await deleteMockAnimal(id!);
+      await deleteAnimal(id!);
       alert("Объявление удалено.");
       navigate("/");
     } catch {

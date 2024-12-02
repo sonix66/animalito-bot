@@ -7,17 +7,30 @@ import (
 )
 
 type (
-	AnnouncementService interface {
-		GetAnnouncementByID(ctx context.Context, id string) (*entity.Announcement, error)
+	Config struct {
+		Token                string `mapstructure:"token"`
+		PollerTimeoutSeconds int    `mapstructure:"poller_timeout_seconds"`
+		AdminUsername        string `mapstructure:"admin_username"`
+	}
+	AnimalService interface {
+		GetAnimalList(
+			ctx context.Context,
+			count int,
+			offset int,
+			photoSource entity.PhotoSource,
+		) ([]*entity.Animal, error)
+		GetAnimalCount(ctx context.Context) (int, error)
 	}
 
 	Controller struct {
-		announcementService AnnouncementService
+		AnimalService AnimalService
+		cfg           *Config
 	}
 )
 
-func New(announcementService AnnouncementService) *Controller {
+func New(cfg *Config, AnimalService AnimalService) *Controller {
 	return &Controller{
-		announcementService: announcementService,
+		AnimalService: AnimalService,
+		cfg:           cfg,
 	}
 }

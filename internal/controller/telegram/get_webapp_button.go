@@ -34,3 +34,13 @@ func (c *Controller) HandleGetWebappButton(ctx telebot.Context) error {
 	return ctx.Send("Заходи)", webappKeyboard)
 
 }
+
+// func (c *Controller) HandleGetWebappButton(ctx telebot.Context) error {
+// 	photo := &telebot.Photo{File: telebot.FromDisk("image.png")}
+// 	fmt.Println(photo.OnDisk())
+// 	fmt.Println(photo.InCloud())
+// 	err := ctx.Send(photo)
+// 	fmt.Println(photo.OnDisk())
+// 	fmt.Println(photo.InCloud())
+// 	return err
+// }

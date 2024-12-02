@@ -6,9 +6,9 @@ import {
   Textarea,
 } from "@telegram-apps/telegram-ui";
 import {
-  addMockAnimal,
-  updateMockAnimal,
-  getMockAnimalById,
+  addAnimal,
+  updateAnimal,
+  getAnimalById,
 } from "../api/animalApi";
 import {
   BackButton,
@@ -32,7 +32,7 @@ const AnimalForm: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      getMockAnimalById(id).then((animal: Animal) => {
+      getAnimalById(id).then((animal: Animal) => {
         setFormData((prev) => ({ ...prev, ...animal, photos: [] }));
         setPhotos(animal.photoURLs);
       });
@@ -67,9 +67,9 @@ const AnimalForm: React.FC = () => {
       dataToSend.append("description", formData.description);
 
       if (id) {
-        await updateMockAnimal(id, dataToSend);
+        await updateAnimal(id, dataToSend);
       } else {
-        await addMockAnimal(dataToSend);
+        await addAnimal(dataToSend);
       }
 
       navigate("/");
