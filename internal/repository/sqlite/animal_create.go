@@ -13,8 +13,8 @@ func (r *Repository) CreateAnimal(ctx context.Context, animal *entity.Animal) (s
 
 	// Запрос для вставки животного
 	queryAnimal := `
-		INSERT INTO animals (id, name, type, description, created_at)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO animals (id, name, type, description)
+		VALUES ($1, $2, $3, $4)
 	`
 
 	_, err := r.db.ExecContext(ctx, queryAnimal,
@@ -22,7 +22,6 @@ func (r *Repository) CreateAnimal(ctx context.Context, animal *entity.Animal) (s
 		animal.Name,
 		animal.Type,
 		animal.Description,
-		animal.CreatedAt,
 	)
 	if err != nil {
 		return "", fmt.Errorf("r.db.QueryRowContext: %w", err)

@@ -60,12 +60,19 @@ const AnimalDetails: React.FC = () => {
           borderRadius: "16px",
         }}
       >
-        <Headline>{animal.name}</Headline>
-        <Subheadline>{animal.type}</Subheadline>
+        <Subheadline>{animal.name}</Subheadline>
         <Caption>{animal.description}</Caption>
         {animal.createdAt && (
           <Caption>
-            Дата создания: {new Date(animal.createdAt).toLocaleDateString()}
+            Дата создания:{" "}
+            {new Date(animal.createdAt).toLocaleString("ru", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            })}
           </Caption>
         )}
         <div

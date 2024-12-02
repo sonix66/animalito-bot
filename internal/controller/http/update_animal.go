@@ -20,6 +20,8 @@ func (c *Controller) UpdateAnimalHandler(ctx *fiber.Ctx) error {
 		return fiber.NewError(http.StatusUnprocessableEntity, "invalid body")
 	}
 
+	animal.ID = ctx.Params("id")
+
 	err = c.animalService.UpdateAnimalByID(ctx.Context(), animal)
 	if err != nil {
 		logger.Error("failed to update animal",

@@ -5,6 +5,8 @@ telegram:
     token: ${TELEGRAM_TOKEN}
     poller_timeout_seconds: ${TELEGRAM_POLLER_TIMEOUT_SECONDS}
     admin_username: ${TELEGRAM_ADMIN_USERNAME}
+    web_app_url: ${TELEGRAM_WEB_APP_URL}
+    preload_photo_chat_id: ${PRELOAD_PHOTO_CHAT_ID}
 
 postgres:
     host: ${POSTGRES_HOST}

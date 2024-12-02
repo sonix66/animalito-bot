@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Animal } from "../models/animal";
 
-const API_URL = "https://k1chj0hc-8080.euw.devtunnels.ms/api/animals";
+const API_URL = "https://0m8gbg09-8080.euw.devtunnels.ms/api/animals";
 
 // Fetch all animals
 export const getAnimals = async (): Promise<Animal[]> => {

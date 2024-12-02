@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  Button,
   FileInput,
   Input,
   Textarea,
+  Typography,
 } from "@telegram-apps/telegram-ui";
-import {
-  addAnimal,
-  updateAnimal,
-  getAnimalById,
-} from "../api/animalApi";
+import { addAnimal, updateAnimal, getAnimalById } from "../api/animalApi";
 import {
   BackButton,
   MainButton,
@@ -103,38 +101,30 @@ const AnimalForm: React.FC = () => {
         }}
         encType="multipart/form-data"
       >
-        <FileInput
-          name="photos"
-          onChange={handleFileChange}
-          accept="image/*"
-          label={id ? "Обновить фото" : "Прикрепить фото"}
-          multiple
-        />
-        <Input
-          name="type"
-          value={formData.type}
-          onChange={handleInputChange}
-          required
-          header="Тип животного"
-        />
+        {!id && (
+          <FileInput
+            name="photos"
+            onChange={handleFileChange}
+            accept="image/*"
+            label={id ? "Обновить фото" : "Прикрепить фото"}
+            multiple
+          />
+        )}
+        <Typography>Заголовок объявления</Typography>
         <Input
           name="name"
           value={formData.name}
           onChange={handleInputChange}
           required
-          header="Имя животного"
         />
+        <Typography>Описание объявления</Typography>
         <Textarea
           name="description"
           value={formData.description}
           onChange={handleInputChange}
           required
-          header="Описание объявления"
         />
-        <MainButton
-          text={id ? "Обновить" : "Сохранить"}
-          onClick={handleSubmit}
-        />
+        <Button onClick={handleSubmit}>{id ? "Обновить" : "Сохранить"}</Button>
       </form>
     </div>
   );

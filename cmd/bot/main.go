@@ -1,22 +1,23 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"flag"
 	"fmt"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/mr-linch/go-tg"
+	"github.com/mr-linch/go-tg/tgb"
 	"github.com/sonix66/animalito-bot/internal/config"
 	"github.com/sonix66/animalito-bot/internal/controller/http"
-	"github.com/sonix66/animalito-bot/internal/controller/telegram"
+	"github.com/sonix66/animalito-bot/internal/controller/tgbot"
 	"github.com/sonix66/animalito-bot/internal/repository/sqlite"
 	animalservice "github.com/sonix66/animalito-bot/internal/services/animal_service"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/sonix66/animalito-bot/pkg/logger"
-	"gopkg.in/telebot.v4"
 )
 
 func main() {
@@ -41,30 +42,18 @@ func main() {
 
 	repo := sqlite.New(db)
 	animalService := animalservice.New(repo, cfg.HTTP.Host, cfg.HTTP.PhotosPrefixURL, cfg.HTTP.StaticFolder)
-	tgController := telegram.New(cfg.Telegram, animalService)
+	tgController := tgbot.New(cfg.Telegram, animalService)
 	httpController := http.New(animalService, cfg.HTTP)
 
-	bot, err := telebot.NewBot(telebot.Settings{
-		Token: cfg.Telegram.Token,
-		Poller: &telebot.LongPoller{
-			Timeout: time.Second * time.Duration(cfg.Telegram.PollerTimeoutSeconds),
-		},
-	})
-	if err != nil {
-		panic(err)
-	}
+	client := tg.New(cfg.Telegram.Token)
+	bot := tgb.NewRouter()
 
-	telegram.InitHandlers(bot, tgController)
-
-	logger.Info("bot is ready to start",
-		"token", cfg.Telegram.Token,
-		"logger_level", cfg.Logger.Level,
-	)
+	tgbot.InitRoutes(bot, tgController)
 
 	server := fiber.New()
 	http.InitHandlers(server, httpController, cfg.HTTP)
 
-	go bot.Start()
+	go mustRunBot(context.Background(), bot, client)
 	server.Listen(fmt.Sprintf(":%s", cfg.HTTP.Port))
 }
 
@@ -77,4 +66,11 @@ func getConfigFile() (string, error) {
 	}
 
 	return *configFile, nil
+}
+
+func mustRunBot(ctx context.Context, router *tgb.Router, client *tg.Client) {
+	err := tgb.NewPoller(router, client).Run(ctx)
+	if err != nil {
+		panic(err)
+	}
 }
