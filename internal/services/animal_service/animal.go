@@ -15,7 +15,7 @@ type (
 		CreatePhoto(ctx context.Context, animalId string, callback entity.OnSaveCallback) error
 		DeleteAnimalByID(ctx context.Context, animalId string) error
 		UpdateAnimal(ctx context.Context, animal *entity.Animal) error
-		GetAnimalCount(ctx context.Context) (int, error)
+		GetAnimalsCount(ctx context.Context) (int, error)
 	}
 
 	Service struct {

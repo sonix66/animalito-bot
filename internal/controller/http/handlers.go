@@ -12,8 +12,9 @@ func InitHandlers(app *fiber.App, controller *Controller, cfg *Config) {
 	animals := api.Group("/animals")
 	{
 		animals.Post("/", controller.CreateAnimalHandler)
-		animals.Get("/:id", controller.GetAnimalHandler)
 		animals.Get("/", controller.GetListAnimalHandler)
+		animals.Get("/count", controller.GetAnimalsCountHandler)
+		animals.Get("/:id", controller.GetAnimalHandler)
 		animals.Put("/:id", controller.UpdateAnimalHandler)
 		animals.Delete("/:id", controller.DeleteAnimalHandler)
 	}

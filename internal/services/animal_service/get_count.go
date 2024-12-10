@@ -5,8 +5,8 @@ import (
 	"fmt"
 )
 
-func (s *Service) GetAnimalCount(ctx context.Context) (int, error) {
-	count, err := s.repo.GetAnimalCount(ctx)
+func (s *Service) GetAnimalsCount(ctx context.Context) (int, error) {
+	count, err := s.repo.GetAnimalsCount(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("s.repo.GetAnimalCount: %w", err)
 	}

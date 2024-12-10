@@ -22,7 +22,7 @@ type (
 			offset int,
 			photoSource entity.PhotoSource,
 		) ([]*entity.Animal, error)
-		GetAnimalCount(ctx context.Context) (int, error)
+		GetAnimalsCount(ctx context.Context) (int, error)
 	}
 
 	Controller struct {

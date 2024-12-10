@@ -27,15 +27,22 @@ func (c *Controller) StartHandler(ctx context.Context, msg *tgb.MessageUpdate) e
 					Current: -1,
 				},
 			),
-			tg.NewInlineKeyboardButtonURL(
-				"☎️",
-				fmt.Sprintf("https://t.me/%s", c.cfg.AdminUsername),
-			),
 			NextAnimalDataFilter.MustButton(
 				"➡️ Вперед",
 				NextAnimalCallbackData{
 					Current: 1,
 				},
+			),
+		},
+		[]tg.InlineKeyboardButton{
+			tg.NewInlineKeyboardButtonURL(
+				"☎️",
+				// fmt.Sprintf("https://t.me/%s", c.cfg.AdminUsername),
+				"https://nekrasovka-priut.ru/",
+			),
+			tg.NewInlineKeyboardButtonURL(
+				"💰",
+				"https://nekrasovka-priut.ru/",
 			),
 		},
 	)
@@ -77,7 +84,7 @@ func (c *Controller) StartHandler(ctx context.Context, msg *tgb.MessageUpdate) e
 				"%s\n\n%s\n\nОбъявление от: %s",
 				animals[0].Name,
 				animals[0].Description,
-				animals[0].CreatedAt.Local().Format("02.01.2006 15:04:05"),
+				animals[0].CreatedAt.Local().Format("02.01.2006"),
 			)),
 	).ReplyMarkup(keyboard)
 

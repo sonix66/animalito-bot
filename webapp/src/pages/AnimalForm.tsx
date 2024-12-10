@@ -8,20 +8,17 @@ import {
   Typography,
 } from "@telegram-apps/telegram-ui";
 import { addAnimal, updateAnimal, getAnimalById } from "../api/animalApi";
-import {
-  BackButton,
-  MainButton,
-  useThemeParams,
-} from "@vkruglikov/react-telegram-web-app";
+import { BackButton, useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import { PhotoList } from "../components/PhotoList";
 import { Animal } from "../models/animal";
 
 const AnimalForm: React.FC = () => {
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [, theme] = useThemeParams();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    photos: [] as File[], // Здесь храним загруженные файлы
+    photo: null as File | null,
     type: "",
     name: "",
     description: "",
@@ -41,33 +38,34 @@ const AnimalForm: React.FC = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
-    console.log({ name, value });
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
       setFormData((prev) => ({
         ...prev,
-        photos: Array.from(event.target.files), // Преобразуем FileList в массив
+        photo: file,
       }));
+      setPhotoPreview(URL.createObjectURL(file)); // Создаем превью
     }
   };
 
   const handleSubmit = async () => {
     try {
       const dataToSend = new FormData();
-      formData.photos.forEach((photo, index) => {
-        dataToSend.append(`photo_${index}`, photo);
-      });
+      if (formData.photo) {
+        dataToSend.append("photo", formData.photo); // Один файл
+      }
       dataToSend.append("type", formData.type);
       dataToSend.append("name", formData.name);
       dataToSend.append("description", formData.description);
 
       if (id) {
-        await updateAnimal(id, dataToSend);
+        await updateAnimal(id, dataToSend as Partial<Animal>);
       } else {
-        await addAnimal(dataToSend);
+        await addAnimal(dataToSend as Partial<Animal>);
       }
 
       navigate("/");
@@ -102,13 +100,27 @@ const AnimalForm: React.FC = () => {
         encType="multipart/form-data"
       >
         {!id && (
-          <FileInput
-            name="photos"
-            onChange={handleFileChange}
-            accept="image/*"
-            label={id ? "Обновить фото" : "Прикрепить фото"}
-            multiple
-          />
+          <>
+            <FileInput
+              name="photo"
+              onChange={handleFileChange}
+              accept="image/*"
+              label={photoPreview ? "Изменить фото" : "Прикрепить фото"}
+            />
+            {photoPreview && (
+              <div style={{ textAlign: "center", marginBottom: "12px" }}>
+                <img
+                  src={photoPreview}
+                  alt="Preview"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "200px",
+                    borderRadius: "8px",
+                  }}
+                />
+              </div>
+            )}
+          </>
         )}
         <Typography>Заголовок объявления</Typography>
         <Input

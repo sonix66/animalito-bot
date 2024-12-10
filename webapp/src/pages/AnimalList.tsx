@@ -1,47 +1,61 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAnimals, deleteAnimal } from "../api/animalApi";
+import { getAnimals, deleteAnimal, getAnimalsCount } from "../api/animalApi";
 import { MainButton, useThemeParams } from "@vkruglikov/react-telegram-web-app";
 import {
   Pagination,
-  Card,
-  Button,
   Text,
-  Avatar,
-  Title,
+  Spinner
 } from "@telegram-apps/telegram-ui";
-import { Animal } from "../models/animal";
+import { useAnimalStore } from "../store/animals";
+import { useQuery } from "@tanstack/react-query";
+import { AnimalCard } from "../components/AnimalCard";
 
 const AnimalList: React.FC = () => {
   const [, theme] = useThemeParams();
-  const [animals, setAnimals] = useState<Animal[]>([]);
   const [pagination, setPagination] = useState({ page: 1, count: 10 });
+  const [animalsCount, setAnimalsCount] = useState(0);
   const navigate = useNavigate();
+  const { animals, setAnimals } = useAnimalStore();
 
-  const fetchAnimals = async () => {
-    try {
-      const data = await getAnimals();
-      setAnimals(data);
-    } catch {
-      alert("Не удалось загрузить список животных.");
-    }
-  };
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["animals", pagination],
+    queryFn: () => getAnimals(10, (pagination.page - 1) * 10),
+  });
+  const { data: dataCount, isLoading: isLoadingCount, error: errorCount } = useQuery({
+    queryKey: ["animalsCount"],
+    queryFn: () => getAnimalsCount(),
+  })
 
-  const handleDelete = async (id?: string) => {
+  useEffect(() => {
+    if (data) setAnimals(data);
+    else setAnimals([]);
+  }, [data, setAnimals]);
+
+  useEffect(() => {
+    if (dataCount) setAnimalsCount(dataCount.count);
+    else setAnimalsCount(0) ;
+  }, [dataCount, setAnimals]);
+
+  const handleAnimalDelete = async (id?: string) => {
     if (window.confirm("Вы уверены, что хотите удалить это объявление?")) {
       try {
-        await deleteAnimal(id);
-        fetchAnimals();
+        await deleteAnimal(id!);
+        setAnimals(animals.filter((animal) => animal.id !== id));
       } catch {
         alert("Ошибка удаления объявления.");
       }
     }
   };
-  useEffect(() => {
-    fetchAnimals();
-  }, []);
 
   const handleMainButtonClick = () => navigate("/add");
+
+  if (isLoading || isLoadingCount) return (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <Spinner size="l"/>
+    </div>
+  );
+  if (error || errorCount) return <Text>Ошибка загрузки.</Text>;
 
   if (!animals || animals.length === 0) {
     return (
@@ -63,12 +77,6 @@ const AnimalList: React.FC = () => {
     );
   }
 
-  // Расчет данных для текущей страницы
-  const paginatedAnimals = animals.slice(
-    (pagination.page - 1) * pagination.count,
-    pagination.page * pagination.count
-  );
-
   return (
     <div
       style={{
@@ -80,61 +88,11 @@ const AnimalList: React.FC = () => {
       }}
     >
       <MainButton text="Добавить объявление" onClick={handleMainButtonClick} />
-      {paginatedAnimals.map((animal) => (
-        <>
-          <Card
-            key={animal.id}
-            style={{
-              marginBottom: "12px",
-              padding: "12px",
-              background: theme.secondary_bg_color,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Avatar
-                size={96}
-                src={animal.photoURLs ? animal.photoURLs[0] : ""}
-                alt={animal.name}
-                style={{ marginRight: "16px" }}
-              />
-              <div>
-                <Title>{animal.name}</Title>
-                <Text>
-                  Дата создания:{" "}
-                  {new Date(animal.createdAt).toLocaleString("ru", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  })}
-                </Text>
-              </div>
-            </div>
-            <div
-              style={{
-                marginTop: "12px",
-                display: "flex",
-                gap: "8px",
-              }}
-            >
-              <Button onClick={() => navigate(`/edit/${animal.id}`)}>
-                Редактировать
-              </Button>
-              <Button mode="bezeled" onClick={() => handleDelete(animal.id)}>
-                Удалить
-              </Button>
-              <Button onClick={() => navigate(`/view/${animal.id}`)}>
-                Подробнее
-              </Button>
-            </div>
-          </Card>
-        </>
-      ))}
+      {data?.map((animal) => <AnimalCard key={animal.id} animal={animal} theme={theme} onAnimalDelete={handleAnimalDelete} />)}
       <Pagination
         page={pagination.page}
         onChange={(_, page) => setPagination({ ...pagination, page })}
+        count={Math.ceil(animalsCount / pagination.count)}
       />
     </div>
   );

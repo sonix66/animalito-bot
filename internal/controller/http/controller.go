@@ -25,6 +25,7 @@ type (
 		) ([]*entity.Animal, error)
 		UpdateAnimalByID(ctx context.Context, animal *entity.Animal) error
 		DeleteAnimalByID(ctx context.Context, id string) error
+		GetAnimalsCount(ctx context.Context) (int, error)
 	}
 
 	Controller struct {

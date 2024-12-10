@@ -10,7 +10,7 @@ import (
 )
 
 func (c *Controller) SwitchAnimalCallbackHandler(ctx context.Context, cbq *tgb.CallbackQueryUpdate, cbd NextAnimalCallbackData) error {
-	totalCount, err := c.AnimalService.GetAnimalCount(ctx)
+	totalCount, err := c.AnimalService.GetAnimalsCount(ctx)
 	if err != nil {
 		return fmt.Errorf("c.AnimalService.GetAnimalCount: %w", err)
 	}
@@ -39,7 +39,7 @@ func (c *Controller) SwitchAnimalCallbackHandler(ctx context.Context, cbq *tgb.C
 		"%s\n\n%s\n\nОбъявление от: %s",
 		animals[0].Name,
 		animals[0].Description,
-		animals[0].CreatedAt.Local().Format("02.01.2006 15:04:05"),
+		animals[0].CreatedAt.Local().Format("02.01.2006"),
 	)
 
 	// Кнопки для навигации
@@ -51,15 +51,22 @@ func (c *Controller) SwitchAnimalCallbackHandler(ctx context.Context, cbq *tgb.C
 					Current: cbd.Current - 1,
 				},
 			),
-			tg.NewInlineKeyboardButtonURL(
-				"☎️",
-				fmt.Sprintf("https://t.me/%s", c.cfg.AdminUsername),
-			),
 			NextAnimalDataFilter.MustButton(
 				"➡️ Вперед",
 				NextAnimalCallbackData{
 					Current: cbd.Current + 1,
 				},
+			),
+		},
+		[]tg.InlineKeyboardButton{
+			tg.NewInlineKeyboardButtonURL(
+				"☎️",
+				// fmt.Sprintf("https://t.me/%s", c.cfg.AdminUsername),
+				"https://nekrasovka-priut.ru/",
+			),
+			tg.NewInlineKeyboardButtonURL(
+				"💰",
+				"https://nekrasovka-priut.ru/",
 			),
 		},
 	)

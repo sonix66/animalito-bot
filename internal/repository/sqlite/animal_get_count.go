@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (r *Repository) GetAnimalCount(ctx context.Context) (int, error) {
+func (r *Repository) GetAnimalsCount(ctx context.Context) (int, error) {
 	query := `
 		SELECT COUNT(*)
 		FROM animals
