@@ -2,6 +2,7 @@ package tgbot
 
 import (
 	"context"
+	"sync"
 
 	"github.com/sonix66/animalito-bot/internal/entity"
 )
@@ -29,6 +30,7 @@ type (
 		AnimalService       AnimalService
 		cfg                 *Config
 		localToTGPhotoIDMap map[string]string
+		mu                  *sync.RWMutex
 	}
 )
 
@@ -37,5 +39,6 @@ func New(cfg *Config, AnimalService AnimalService) *Controller {
 		AnimalService:       AnimalService,
 		cfg:                 cfg,
 		localToTGPhotoIDMap: map[string]string{},
+		mu:                  &sync.RWMutex{},
 	}
 }

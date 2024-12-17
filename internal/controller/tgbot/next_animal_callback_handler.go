@@ -71,7 +71,10 @@ func (c *Controller) SwitchAnimalCallbackHandler(ctx context.Context, cbq *tgb.C
 		},
 	)
 
+	c.mu.RLock()
 	photoFileID, ok := c.localToTGPhotoIDMap[animals[0].PhotoURLs[0]]
+	c.mu.RUnlock()
+
 	if !ok {
 		inputFile, err := tg.NewInputFileLocal(animals[0].PhotoURLs[0])
 		if err != nil {
@@ -96,7 +99,10 @@ func (c *Controller) SwitchAnimalCallbackHandler(ctx context.Context, cbq *tgb.C
 		}
 
 		photoFileID = string(photoMessage.Photo[0].FileID)
+
+		c.mu.Lock()
 		c.localToTGPhotoIDMap[animals[0].PhotoURLs[0]] = photoFileID
+		c.mu.Unlock()
 	}
 
 	media := &tg.InputMediaPhoto{
