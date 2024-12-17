@@ -1,19 +1,17 @@
 package config
 
 import (
-	"github.com/sonix66/animalito-bot/internal/repository/postgres"
+	"github.com/sonix66/animalito-bot/internal/controller/http"
+	"github.com/sonix66/animalito-bot/internal/controller/tgbot"
+	"github.com/sonix66/animalito-bot/internal/repository/sqlite"
 	"github.com/sonix66/animalito-bot/pkg/logger"
 )
 
 type (
-	TelegramConfig struct {
-		Token                string `mapstructure:"token"`
-		PollerTimeoutSeconds int    `mapstructure:"poller_timeout_seconds"`
-	}
-
 	Config struct {
-		Logger   *logger.Config   `mapstructure:"logger"`
-		Telegram *TelegramConfig  `mapstructure:"telegram"`
-		Postgres *postgres.Config `mapstructure:"postgres"`
+		Logger   *logger.Config `mapstructure:"logger"`
+		Telegram *tgbot.Config  `mapstructure:"telegram"`
+		HTTP     *http.Config   `mapstructure:"http"`
+		SQLite   *sqlite.Config `mapstructure:"sqlite"`
 	}
 )

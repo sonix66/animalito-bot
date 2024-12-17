@@ -1,13 +1,25 @@
 logger:
-  level: ${LOGGER_LEVEL}
+    level: ${LOGGER_LEVEL}
 
 telegram:
-  token: ${TELEGRAM_TOKEN}
-  poller_timeout_seconds: ${TELEGRAM_POLLER_TIMEOUT_SECONDS}
+    token: ${TELEGRAM_TOKEN}
+    poller_timeout_seconds: ${TELEGRAM_POLLER_TIMEOUT_SECONDS}
+    admin_username: ${TELEGRAM_ADMIN_USERNAME}
+    web_app_url: ${TELEGRAM_WEB_APP_URL}
+    preload_photo_chat_id: ${PRELOAD_PHOTO_CHAT_ID}
 
 postgres:
-  host: ${POSTGRES_HOST}
-  port: ${POSTGRES_PORT}
-  user: ${POSTGRES_USER}
-  password: ${POSTGRES_PASSWORD}
-  database: ${POSTGRES_DB}
+    host: ${POSTGRES_HOST}
+    port: ${POSTGRES_PORT}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    database: ${POSTGRES_DB}
+
+http:
+    host: ${HTTP_HOST}
+    port: ${HTTP_PORT}
+    static_folder: ${HTTP_STATIC_FOLDER}
+    photos_prefix_url: ${HTTP_PHOTOS_PREFIX_URL}
+
+sqlite:
+    filepath: ${SQLITE_FILEPATH}
