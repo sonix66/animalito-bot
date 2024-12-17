@@ -33,7 +33,7 @@ func InitRoutes(router *tgb.Router, controller *Controller) {
 			tgb.ChatType(tg.ChatTypePrivate),
 		).
 		CallbackQuery(
-			NextAnimalDataFilter.Handler(controller.SwitchAnimalCallbackHandler),
-			NextAnimalDataFilter.Filter(),
+			nextAnimalDataFilter.Handler(controller.SwitchAnimalCallbackHandler),
+			nextAnimalDataFilter.Filter(),
 		)
 }

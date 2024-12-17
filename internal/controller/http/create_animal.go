@@ -30,40 +30,23 @@ func (c *Controller) CreateAnimalHandler(ctx *fiber.Ctx) error {
 
 	fileHeaders := form.File
 
-	// callback := func() error {
-	// 	for _, file := range files {
-	// 		fileUUID := uuid.New().String()
-	// 		if err := ctx.SaveFile(file[0], fmt.Sprintf("%s/%s", c.cfg.StaticFolder, fileUUID)); err != nil {
-	// 			logger.Error("can not save file",
-	// 				"file", file[0].Filename,
-	// 				"err", err.Error(),
-	// 			)
-	// 			return fiber.NewError(http.StatusInternalServerError, "can not save file")
-	// 		}
-	// 		animal.PhotoURLs = append(animal.PhotoURLs, fileUUID)
-	// 	}
-
-	// 	return nil
-	// }
-	//
-
 	filesData := make([][]byte, 0, len(fileHeaders))
 	for _, fileHeader := range fileHeaders {
-		file, err := fileHeader[0].Open()
-		if err != nil {
+		file, errOpen := fileHeader[0].Open()
+		if errOpen != nil {
 			logger.Error("failed to open file",
 				"file", fileHeader[0].Filename,
-				"err", err.Error(),
+				"err", errOpen.Error(),
 			)
 			return fiber.NewError(http.StatusInternalServerError)
 		}
 		defer file.Close()
 
-		fileData, err := io.ReadAll(file)
-		if err != nil {
+		fileData, errRead := io.ReadAll(file)
+		if errRead != nil {
 			logger.Error("failed to open file",
 				"file", fileHeader[0].Filename,
-				"err", err.Error(),
+				"err", errRead.Error(),
 			)
 			return fiber.NewError(http.StatusInternalServerError)
 		}

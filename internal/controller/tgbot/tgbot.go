@@ -34,9 +34,9 @@ type (
 	}
 )
 
-func New(cfg *Config, AnimalService AnimalService) *Controller {
+func New(cfg *Config, animalService AnimalService) *Controller {
 	return &Controller{
-		AnimalService:       AnimalService,
+		AnimalService:       animalService,
 		cfg:                 cfg,
 		localToTGPhotoIDMap: map[string]string{},
 		mu:                  &sync.RWMutex{},

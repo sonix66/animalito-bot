@@ -2,6 +2,7 @@ package tgbot
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/mr-linch/go-tg"
@@ -15,19 +16,19 @@ func (c *Controller) StartHandler(ctx context.Context, msg *tgb.MessageUpdate) e
 		return fmt.Errorf("c.announcementService.GetAnnouncementByID: %w", err)
 	}
 	if len(animals) == 0 {
-		return fmt.Errorf("animal list is empty")
+		return errors.New("animal list is empty")
 	}
 
 	// Кнопки для навигации
 	keyboard := tg.NewInlineKeyboardMarkup(
 		[]tg.InlineKeyboardButton{
-			NextAnimalDataFilter.MustButton(
+			nextAnimalDataFilter.MustButton(
 				"⬅️ Назад",
 				NextAnimalCallbackData{
 					Current: -1,
 				},
 			),
-			NextAnimalDataFilter.MustButton(
+			nextAnimalDataFilter.MustButton(
 				"➡️ Вперед",
 				NextAnimalCallbackData{
 					Current: 1,
@@ -49,9 +50,9 @@ func (c *Controller) StartHandler(ctx context.Context, msg *tgb.MessageUpdate) e
 
 	photoFileID, ok := c.localToTGPhotoIDMap[animals[0].PhotoURLs[0]]
 	if !ok {
-		inputFile, err := tg.NewInputFileLocal(animals[0].PhotoURLs[0])
-		if err != nil {
-			return err
+		inputFile, errNewInputFileLocal := tg.NewInputFileLocal(animals[0].PhotoURLs[0])
+		if errNewInputFileLocal != nil {
+			return fmt.Errorf("tg.NewInputFileLocal: %w", errNewInputFileLocal)
 		}
 		defer inputFile.Close()
 
@@ -61,14 +62,14 @@ func (c *Controller) StartHandler(ctx context.Context, msg *tgb.MessageUpdate) e
 			tg.NewFileArgUpload(inputFile),
 		)
 
-		photoMessage, err := sendPhotoCall.Do(ctx)
-		if err != nil {
-			return fmt.Errorf("sendPhotoCall.Do: %w", err)
+		photoMessage, errDo := sendPhotoCall.Do(ctx)
+		if errDo != nil {
+			return fmt.Errorf("sendPhotoCall.Do: %w", errDo)
 		}
 
 		// Извлекаем FileID из первой версии фото
 		if len(photoMessage.Photo) == 0 {
-			return fmt.Errorf("no photo returned from Telegram")
+			return errors.New("no photo returned from Telegram")
 		}
 
 		photoFileID = string(photoMessage.Photo[0].FileID)

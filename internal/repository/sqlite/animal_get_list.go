@@ -34,7 +34,7 @@ func (r *Repository) GetAnimalList(
 		var animal entity.Animal
 		var photoIDs sql.NullString
 
-		err := rows.Scan(
+		errScan := rows.Scan(
 			&animal.ID,
 			&animal.Name,
 			&animal.Type,
@@ -42,8 +42,8 @@ func (r *Repository) GetAnimalList(
 			&animal.CreatedAt,
 			&photoIDs,
 		)
-		if err != nil {
-			return nil, fmt.Errorf("rows.Scan: %w", err)
+		if errScan != nil {
+			return nil, fmt.Errorf("rows.Scan: %w", errScan)
 		}
 
 		if photoIDs.Valid {

@@ -36,6 +36,7 @@ func main() {
 	}
 
 	// Проверяем соединение
+	//nolint:govet // not overriding
 	if err := db.Ping(); err != nil {
 		panic(err)
 	}
@@ -54,7 +55,7 @@ func main() {
 	http.InitHandlers(server, httpController, cfg.HTTP)
 
 	go mustRunBot(context.Background(), bot, client)
-	server.Listen(fmt.Sprintf(":%s", cfg.HTTP.Port))
+	_ = server.Listen(fmt.Sprintf(":%s", cfg.HTTP.Port))
 }
 
 func getConfigFile() (string, error) {

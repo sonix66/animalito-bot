@@ -3,7 +3,8 @@ package tgbot
 import "github.com/mr-linch/go-tg/tgb"
 
 var (
-	NextAnimalDataFilter = tgb.NewCallbackDataFilter[NextAnimalCallbackData](
+	//nolint:gochecknoglobals // not global
+	nextAnimalDataFilter = tgb.NewCallbackDataFilter[NextAnimalCallbackData](
 		"next_animal",
 	)
 )

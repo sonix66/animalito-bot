@@ -38,5 +38,4 @@ func (r *Repository) CreatePhoto(
 	}
 
 	return nil
-
 }
